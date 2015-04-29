@@ -29,6 +29,6 @@ dcel_poly<point<long long int, 2> >
 _dcel_poly_union(dcel_poly<point<long long int, 2> > A, dcel_poly<point<long long int, 2> > B) 
 {
     //now the hard part.
-     
+    //basic flow is: we detect intersections, sort them into the polygons, then trace around.     
 }
 #endif
