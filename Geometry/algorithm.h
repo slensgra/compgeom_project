@@ -2,7 +2,7 @@
 #define __ALGORITHM_H__
 
 //union for a list of polygons!!!!!
-polygon<point<long long int, 2> >
+/*polygon<point<long long int, 2> >
 union_all(std::vector<polygon<point<long long int, 2>>> in_list)
 {
     std::vector<dcel_poly<point<long long int, 2> > > polys;
@@ -30,5 +30,9 @@ _dcel_poly_union(dcel_poly<point<long long int, 2> > A, dcel_poly<point<long lon
 {
     //now the hard part.
     //basic flow is: we detect intersections, sort them into the polygons, then trace around.     
-}
+}*/
+
+//visible_vertices sweepline algo.
+//visible_vertices
+
 #endif

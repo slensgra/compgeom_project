@@ -6,6 +6,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <string>
+#include <glm/glm.hpp>
 
 
 template <typename data_t, int dim> class point 
@@ -84,6 +85,12 @@ public:
     typename std::array<data_t, dim>::iterator end()
     {
         return vals.end();
+    };
+
+    //haxxy, works only for 2d case...
+    operator glm::vec4()
+    {
+        return glm::vec4(this->vals[0],this->vals[1],0.0,1.0); 
     };
 
 private:

@@ -5,7 +5,8 @@
 #include <initializer_list>
 #include <array>
 
-template<typename ptype> class polygon
+template<typename ptype> 
+class polygon
 {
 public:
     polygon(const std::initializer_list<ptype> & il) : vals(il)
