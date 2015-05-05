@@ -4,6 +4,9 @@ LDFLAGS=-lGLEW -lGL -lm -lGLU -lglut -std=c++0x -pg -g
 
 all: app
 
+clean:
+	rm *.o
+
 app: Shader.o main.o
 	$(CC) main.o Shader.o $(LDFLAGS) -o hello
 

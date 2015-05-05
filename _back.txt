@@ -1,0 +1,230 @@
+
+/*
+bool visible(std::list<edge> status, point<GLfloat, 2> start, vertex<GLfloat> q, vertex<GLfloat> prev_q, bool prev_q_visible, int idx)
+{
+    //if start, q intersects the interior of the box v refers to, false
+    if(q.id != 0 && q.id != 1)
+    {
+        if(box_seg_intersect(gboxes[q.box_id], start[0], start[1], q.x, q.y))
+            return false;
+    }
+    //else if i = 1 or wi-1 is not on the segment pwi
+    else if(idx == 0 || !point_on_segment(prev_q.x, prev_q.y, start[0], start[1],
+                q.x,q.y))
+    {
+        //  search in status for the edge in the leftmost leaf 
+        //  if e exists and pwi intersects e return false
+        //else return true
+        for(auto edge : status)
+        {
+            if(seg_intersect(edge[0][0],edge[0][1],
+                        edge[1][0],edge[1][1],start[0],start[1],q.x,q.y))
+                    return false;
+        }
+        return true;
+    }
+    
+    
+    else if(!prev_q_visible)
+      return false;
+    
+    //else search in status for an edge that intersects wi,wi-1
+    //  return false if you find one
+    for(auto edge : status)
+    {
+        if(seg_intersect(edge[0][0],edge[0][1], edge[1][0], edge[1][1],
+                q.x,q.y,prev_q.x, prev_q.y))
+            return false;
+    }
+    return true;
+}
+
+//return true if the point is ccw of the edge
+bool ccw_of(point<GLfloat,2> p, edge e)
+{
+    return (e[0][0]-p[0]) * (e[1][1]-p[1]) 
+        - (e[1][0] - p[0]) *(e[0][1]-p[1]) > 0;
+}
+
+//returns a list of visible vertices with distances for a given vertex
+std::list<std::pair<int,GLfloat>> visible_vertices(std::vector<vertex<GLfloat> > 
+        verts, std::vector<box<GLfloat>> boxes, vertex<GLfloat> p, 
+        std::list<edge> edges)
+{
+    std::vector<vertex<GLfloat>> nverts = sort_by_halfline_angle(verts, point<GLfloat,2>({p.x,p.y}));
+    std::list<edge> sweep_status;
+    std::list<std::pair<int,GLfloat>> neighbors;
+
+    //find all edges intersected by the halfline starting at p
+    for(auto edge : edges)
+    {
+        if(intersects(point<GLfloat,2>({p.x,p.y}), edge))
+                sweep_status.push_back(edge);
+    }
+
+    bool prev_q_visible = false;
+    for(int i = 0; i < nverts.size(); ++i)
+    {
+        vertex<GLfloat> v;
+        if(i == 0)
+            v = vertex<GLfloat>();
+        else
+            v = verts[i-1];
+
+        if(visible(sweep_status, point<GLfloat,2>({p.x,p.y}), nverts[i], v, prev_q_visible, i))
+        {
+            neighbors.emplace_back(nverts[i].id, dist(nverts[i].x,nverts[i].y,p.x,p.y));
+            prev_q_visible = true;
+        }
+        else
+        {
+            prev_q_visible = false;
+        }
+    
+
+            
+        //get incident edges of boxes, if they are ccw, add them
+        //to status, if not, take them out
+        //there will always be two incident edges
+        //
+        //
+        if(verts[i].id != 0 && verts[i].id != 1)
+        {
+        box<GLfloat> cbox = gboxes[verts[i].box_id];
+
+        int j = 0;
+        for(int s = 0; s < 4; ++s)
+        {
+            if(cbox[s][0] == verts[i].x && cbox[s][1] == verts[i].y)
+            {
+                j = s;
+                break;
+            }
+        }
+
+        edge nedge1 = edge({cbox[j],cbox[j-1]});
+        edge nedge2 = edge({cbox[j],cbox[j+1]});
+        if(ccw_of(nedge1[0], edge({ point<GLfloat,2>({p.x,p.y}), point<GLfloat,2>({verts[i].x, verts[i].y}) }) )
+                && 
+           ccw_of( nedge1[1], edge({point<GLfloat,2>({p.x,p.y}) , point<GLfloat,2>({verts[i].x, verts[i].y})}))) 
+        {
+            for(std::list<edge>::iterator edge_itr = sweep_status.begin(); edge_itr
+                    != sweep_status.end(); ++edge_itr)
+            {
+                if((*edge_itr)[0][0] == nedge1[0][0] && (*edge_itr)[0][1] == nedge1[0][1])
+                { 
+                    sweep_status.erase(edge_itr);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            sweep_status.push_back(nedge1);
+        }
+        if(ccw_of(nedge2[0], edge({ point<GLfloat,2>({p.x,p.y}), point<GLfloat,2>({verts[i].x, verts[i].y}) }) )
+                && 
+           ccw_of( nedge2[1], edge({point<GLfloat,2>({p.x,p.y}) , point<GLfloat,2>({verts[i].x, verts[i].y})}))) 
+        {
+            for(std::list<edge>::iterator edge_itr = sweep_status.begin(); edge_itr
+                    != sweep_status.end(); ++edge_itr)
+            {
+                if((*edge_itr)[0][0] == nedge2[0][0] && (*edge_itr)[0][1] == nedge2[0][1])
+                { 
+                    sweep_status.erase(edge_itr);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            sweep_status.push_back(nedge2);
+        }
+    }
+    }
+    return neighbors;
+}*/
+float dot(glm::vec2 a, glm::vec2 b)
+{
+    return a[0]*b[0] + a[1]*b[1];
+}
+
+float norm(glm::vec2 a)
+{
+    return std::sqrt(std::pow(a[0],2) + std::pow(a[1],2));
+}
+
+bool cmp(vertex<GLfloat> v1, vertex<GLfloat> v2, point<GLfloat,2> p)
+{
+    //halflines from point to vertices
+    glm::vec2 a(v1.x-p[0], v1.y-p[1]);
+    glm::vec2 b(v2.x-p[0], v1.y-p[1]);
+
+    glm::vec2 l(1,0);
+ 
+    float a1 = std::acos(  dot(a,l) / (norm(a)*norm(l)) );
+    float a2 = std::acos(  dot(b,l) / (norm(b)*norm(l)) );
+   
+    return a1 < a2; 
+}
+
+void swap(std::vector<vertex<GLfloat> >& verts, int i, int j)
+{
+    vertex<GLfloat> temp;
+    temp = verts[i];
+
+    verts[i] = verts[j];
+    verts[j] = temp;
+}
+
+std::vector<vertex<GLfloat> > sort_by_halfline_angle(std::vector<vertex<GLfloat> > verts, point<GLfloat, 2> p)
+{
+    for(int i = 0; i < verts.size(); ++i)
+    {
+        for(int j = i+1; j < verts.size(); ++j)
+        {
+            if(cmp(verts[j],verts[i], p))
+                    swap(verts, i, j);
+        }
+    }
+    return verts;
+} 
+
+
+//detects intersection with the half line starting 
+//at p extending parallel to the x axis for an edge
+bool intersects(point<GLfloat,2> p, edge e)
+{
+    if( (e[0][0] >= p[0] || e[1][0] >= p[0]) && 
+            ((e[0][1] <= p[1] && e[1][1] >= p[1]) || (e[0][1] >= p[1] && e[1][1] <= p[1])))
+    {
+        return true;
+    }
+    return false;
+}
+
+//function to make sure the intersects function works
+void intersects_tester()
+{
+    assert(intersects(point<GLfloat,2>({0,0}), edge({point<GLfloat,2>({1,1}),point<GLfloat,2>({1,-1})})));
+
+    assert(!intersects(point<GLfloat,2>({1,1}), edge({point<GLfloat,2>({0,0}),point<GLfloat,2>({1,-1})})));
+}
+
+//returns true if segment ((a,b),(c,d)) intersects ((d,e),(f,g))
+bool seg_intersect(float a, float b, float c, float d, float e, float f, float g, float h)
+{
+    //checking which sides the end points are on 
+    //respective to eachother
+    //hard coded dot product in here
+    
+    return ((e-a)*(d-b) - (f-e)*(c-a)) * ((g-a)*(d-b) - (h-b)*(c-a)) < 0
+        &&
+        ((a-e)*(h-f)-(b-f)*(g-e)) * ((c-a)*(h-f) - (d-f)*(g-e)) < 0;
+}
+
+void seg_intersect_tester()
+{
+    assert(seg_intersect(1,1,1,-1,0,0,5,0));
+    assert(!seg_intersect(1,1,1,-1,0,1,0,-1));
+}
